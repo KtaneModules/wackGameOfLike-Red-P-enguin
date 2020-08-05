@@ -17,18 +17,18 @@ public class script : MonoBehaviour {
 
     private int blackToAliveSquaresNum;
     private int[] whiteStillAliveRanges = new int[2];
-    private bool[,] grids = new bool[4,80];
+    private bool[,] grids = new bool[4, 80];
     private bool[] inputGrid = new bool[48];
     private bool[] placeholderGrid = new bool[80];
     private List<bool> solutionsList = new List<bool>();
-    private int[] gridNums = new int[48] { 9,10,11,12,13,14,17,18,19,20,21,22,25,26,27,28,29,30,33,34,35,36,37,38,41,42,43,44,45,46,49,50,51,52,53,54,57,58,59,60,61,62,65,66,67,68,69,70 };
+    private int[] gridNums = new int[48] { 9, 10, 11, 12, 13, 14, 17, 18, 19, 20, 21, 22, 25, 26, 27, 28, 29, 30, 33, 34, 35, 36, 37, 38, 41, 42, 43, 44, 45, 46, 49, 50, 51, 52, 53, 54, 57, 58, 59, 60, 61, 62, 65, 66, 67, 68, 69, 70 };
     private int blackPercent = 34;
-    private int[] squareCheckNums = new int[8] { -9, -8, -7, -1, 1, 7, 8 , 9 };
+    private int[] squareCheckNums = new int[8] { -9, -8, -7, -1, 1, 7, 8, 9 };
     private int whiteNeighbors = 0;
     private bool entireGridBlack = false;
 
-    private int[] multipleCheckNums1 = new int[] { 0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,3,3,3,3,3,3,4,4,4,4,4,5,5,5,5,6,6,6,7,7,8 };
-    private int[] multipleCheckNums2 = new int[] { 0,1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8,2,3,4,5,6,7,8,3,4,5,6,7,8,4,5,6,7,8,5,6,7,8,6,7,8,7,8,8 };
+    private int[] multipleCheckNums1 = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 7, 7, 8 };
+    private int[] multipleCheckNums2 = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 2, 3, 4, 5, 6, 7, 8, 3, 4, 5, 6, 7, 8, 4, 5, 6, 7, 8, 5, 6, 7, 8, 6, 7, 8, 7, 8, 8 };
 
     private int[] secondGridOtherSolutions1 = new int[360];
     private int[] secondGridOtherSolutions2 = new int[360];
@@ -59,6 +59,7 @@ public class script : MonoBehaviour {
         blackToAliveSquaresNum = Rnd.Range(0,9); //randomly select rules
         whiteStillAliveRanges[0] = Rnd.Range(0,9);
         whiteStillAliveRanges[1] = Rnd.Range(0,9);
+        whiteStillAliveRanges[1] = 3;
         if (whiteStillAliveRanges[0] > whiteStillAliveRanges[1]) //if first value is bigger than second switch them
         {
             intPlaceholder = whiteStillAliveRanges[0];
@@ -263,7 +264,7 @@ public class script : MonoBehaviour {
                         }
                     }
                 }
-                for(int i = 0; i < 48; i++)
+                for (int i = 0; i < 48; i++)
                 {
                     if(placeholderGrid[gridNums[i]] != grids[1, gridNums[i]])
                     {
@@ -274,6 +275,7 @@ public class script : MonoBehaviour {
                         secondGridOtherSolutions1[secondGridWhichNum] = g;
                         secondGridOtherSolutions2[secondGridWhichNum] = h;
                         secondGridWhichNum++;
+                        DebugMsg("yeap" + secondGridWhichNum);
                     }
                 }
             }
@@ -357,6 +359,10 @@ public class script : MonoBehaviour {
         DebugMsg("" + debugGrids[2][42] + debugGrids[2][43] + debugGrids[2][44] + debugGrids[2][45] + debugGrids[2][46] + debugGrids[2][47]);
 
         DebugMsg("Calculated solutions: " + secondGridWhichNum);
+        for(int i = 0; i < 8; i++)
+        {
+            inputGrid[i] = solutionsList[i];
+        }
         DebugMsg("Intended number of neighbouring squares to turn a black square white: " + blackToAliveSquaresNum);
         DebugMsg("Intended range of neighbouring squares to keep a white square white: " + whiteStillAliveRanges[0] + " is the minimum number of squares, " + whiteStillAliveRanges[1] + " is the maximum number of squares.");
     }
@@ -396,6 +402,14 @@ public class script : MonoBehaviour {
                 }
             }
         }
+        for (int i = 0; i < 48; i++)
+        {
+            if (placeholderGrid[gridNums[i]] != grids[2, gridNums[i]])
+            {
+                i = 48;
+            }
+        }
+        DebugMsg("" + multipleCheckNums1[secondGridOtherSolutions1[k]] + " " + multipleCheckNums2[secondGridOtherSolutions1[k]] + " " + secondGridOtherSolutions2[k]);
         for(int i = 0; i < 48; i++)
         {
             solutionsList.Add(placeholderGrid[gridNums[i]]);
