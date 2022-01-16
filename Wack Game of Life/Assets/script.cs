@@ -30,9 +30,9 @@ public class script : MonoBehaviour {
     private int[] multipleCheckNums1 = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 7, 7, 8 };
     private int[] multipleCheckNums2 = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 2, 3, 4, 5, 6, 7, 8, 3, 4, 5, 6, 7, 8, 4, 5, 6, 7, 8, 5, 6, 7, 8, 6, 7, 8, 7, 8, 8 };
 
-    private int[] secondGridOtherSolutions1 = new int[360];
-    private int[] secondGridOtherSolutions2 = new int[360];
-    private int secondGridWhichNum = 0;
+    private List<int> secondGridOtherSolutions1 = new List<int>();
+    private List<int> secondGridOtherSolutions2 = new List<int>();
+    private List<int> debugOtherSolutions = new List<int>();
 
     public Renderer[] squares;
     public Material[] squareMats;
@@ -42,81 +42,80 @@ public class script : MonoBehaviour {
     private bool viewingGrid3 = false;
     public TextMesh bigButtonText;
 
-    private string[] debugGrids = new string[3];
+    private string[] debugGrids = new string[5];
     private string debugInput;
-    private string debugSolution;
 
     private int tpWhichColumn = 0;
     private bool tpNoLetter = false;
-
+    private bool tpStillFindingSolution = true;
     // Use this for initialization
-    void Start ()
+    void Start()
     {
-        initialization:
+    initialization:
+        solutionsList.Clear();
         debugGrids[0] = "";
         debugGrids[1] = "";
         debugGrids[2] = "";
         blackToAliveSquaresNum = Rnd.Range(0,9); //randomly select rules
         whiteStillAliveRanges[0] = Rnd.Range(0,9);
         whiteStillAliveRanges[1] = Rnd.Range(0,9);
-        whiteStillAliveRanges[1] = 3;
         if (whiteStillAliveRanges[0] > whiteStillAliveRanges[1]) //if first value is bigger than second switch them
         {
             intPlaceholder = whiteStillAliveRanges[0];
             whiteStillAliveRanges[0] = whiteStillAliveRanges[1];
             whiteStillAliveRanges[1] = intPlaceholder;
         }
-        for(int i = 0; i < 48; i++) //generate board
+        for (int i = 0; i < 48; i++) //generate board
         {
-            intPlaceholder = Rnd.Range(0,48);
+            intPlaceholder = Rnd.Range(0, 48);
             if (intPlaceholder > blackPercent)
             {
-                grids[0,gridNums[i]] = true;
+                grids[0, gridNums[i]] = true;
                 squares[i].material = squareMats[1];
                 inputGrid[i] = true;
                 debugGrids[0] = debugGrids[0] + "#";
             }
             else
             {
-                grids[0,gridNums[i]] = false;
+                grids[0, gridNums[i]] = false;
                 squares[i].material = squareMats[0];
                 inputGrid[i] = false;
                 debugGrids[0] = debugGrids[0] + "O";
             }
         }
-        for(int i = 0; i < 48; i++) //2nd generation
+        for (int i = 0; i < 48; i++) //2nd generation
         {
             whiteNeighbors = 0;
-            for(int j = 0; j < 8; j++)
+            for (int j = 0; j < 8; j++)
             {
-                if(grids[0,gridNums[i] + squareCheckNums[j]]) //if this square that we're checking is white
+                if (grids[0, gridNums[i] + squareCheckNums[j]]) //if this square that we're checking is white
                 {
                     whiteNeighbors++;
                 }
             }
-            if(grids[0,gridNums[i]]) //if this square is white
+            if (grids[0, gridNums[i]]) //if this square is white
             {
-                if(whiteNeighbors < whiteStillAliveRanges[0] || whiteNeighbors > whiteStillAliveRanges[1])
+                if (whiteNeighbors < whiteStillAliveRanges[0] || whiteNeighbors > whiteStillAliveRanges[1])
                 {
-                    grids[1,gridNums[i]] = false;
+                    grids[1, gridNums[i]] = false;
                     debugGrids[1] = debugGrids[1] + "O";
                 }
                 else
                 {
-                    grids[1,gridNums[i]] = true;
+                    grids[1, gridNums[i]] = true;
                     debugGrids[1] = debugGrids[1] + "#";
                 }
             }
             else
             {
-                if(whiteNeighbors == blackToAliveSquaresNum)
+                if (whiteNeighbors == blackToAliveSquaresNum)
                 {
-                    grids[1,gridNums[i]] = true;
+                    grids[1, gridNums[i]] = true;
                     debugGrids[1] = debugGrids[1] + "#";
                 }
                 else
                 {
-                    grids[1,gridNums[i]] = false;
+                    grids[1, gridNums[i]] = false;
                     debugGrids[1] = debugGrids[1] + "O";
                 }
             }
@@ -126,7 +125,7 @@ public class script : MonoBehaviour {
             whiteNeighbors = 0;
             for (int j = 0; j < 8; j++)
             {
-                if (grids[1,gridNums[i] + squareCheckNums[j]]) //if this square that we're checking is white
+                if (grids[1, gridNums[i] + squareCheckNums[j]]) //if this square that we're checking is white
                 {
                     whiteNeighbors++;
                 }
@@ -135,12 +134,12 @@ public class script : MonoBehaviour {
             {
                 if (whiteNeighbors < whiteStillAliveRanges[0] || whiteNeighbors > whiteStillAliveRanges[1])
                 {
-                    grids[2,gridNums[i]] = false;
+                    grids[2, gridNums[i]] = false;
                     debugGrids[2] = debugGrids[2] + "O";
                 }
                 else
                 {
-                    grids[2,gridNums[i]] = true;
+                    grids[2, gridNums[i]] = true;
                     debugGrids[2] = debugGrids[2] + "#";
                 }
             }
@@ -148,22 +147,56 @@ public class script : MonoBehaviour {
             {
                 if (whiteNeighbors == blackToAliveSquaresNum)
                 {
-                    grids[2,gridNums[i]] = true;
+                    grids[2, gridNums[i]] = true;
                     debugGrids[2] = debugGrids[2] + "#";
                 }
                 else
                 {
-                    grids[2,gridNums[i]] = false;
+                    grids[2, gridNums[i]] = false;
                     debugGrids[2] = debugGrids[2] + "O";
                 }
             }
         }
-        entireGridBlack = true;
-        for(int i = 0; i < 48; i++) //check if boards 1 and 2 or boards 2 and 3 are the same, or if any of the stages are entirely black for more interesting modules
+        debugGrids[4] = "";
+        for (int i = 0; i < 48; i++) //4th generation (intended solution)
         {
-            if(grids[0,gridNums[i]] == false && entireGridBlack)
+            whiteNeighbors = 0;
+            for (int j = 0; j < 8; j++)
             {
-                if(i == 47)
+                if (grids[2, gridNums[i] + squareCheckNums[j]]) //if this square that we're checking is white
+                {
+                    whiteNeighbors++;
+                }
+            }
+            if (grids[2, gridNums[i]]) //if this square is white
+            {
+                if (whiteNeighbors < whiteStillAliveRanges[0] || whiteNeighbors > whiteStillAliveRanges[1])
+                {
+                    debugGrids[4] = debugGrids[4] + "O";
+                }
+                else
+                {
+                    debugGrids[4] = debugGrids[4] + "#";
+                }
+            }
+            else
+            {
+                if (whiteNeighbors == blackToAliveSquaresNum)
+                {
+                    debugGrids[4] = debugGrids[4] + "#";
+                }
+                else
+                {
+                    debugGrids[4] = debugGrids[4] + "O";
+                }
+            }
+        }
+        entireGridBlack = true;
+        for (int i = 0; i < 48; i++) //check if boards 1 and 2 or boards 2 and 3 are the same, or if any of the stages are entirely black for more interesting modules
+        {
+            if (grids[0, gridNums[i]] == false && entireGridBlack)
+            {
+                if (i == 47)
                 {
                     goto initialization;
                 }
@@ -172,7 +205,7 @@ public class script : MonoBehaviour {
             {
                 entireGridBlack = false;
             }
-            if(grids[0,gridNums[i]] == grids[1,gridNums[i]])
+            if (grids[0, gridNums[i]] == grids[1, gridNums[i]])
             {
                 if (i == 47)
                 {
@@ -226,7 +259,6 @@ public class script : MonoBehaviour {
                 i = 48;
             }
         }
-        secondGridWhichNum = 0;
         for (int g = 0; g < 45; g++)
         {
             for (int h = 0; h < 9; h++)
@@ -266,23 +298,21 @@ public class script : MonoBehaviour {
                 }
                 for (int i = 0; i < 48; i++)
                 {
-                    if(placeholderGrid[gridNums[i]] != grids[1, gridNums[i]])
+                    if (placeholderGrid[gridNums[i]] != grids[1, gridNums[i]])
                     {
                         i = 48;
                     }
-                    else if(i == 47)
+                    else if (i == 47)
                     {
-                        secondGridOtherSolutions1[secondGridWhichNum] = g;
-                        secondGridOtherSolutions2[secondGridWhichNum] = h;
-                        secondGridWhichNum++;
-                        DebugMsg("yeap" + secondGridWhichNum);
+                        secondGridOtherSolutions1.Add(g);
+                        secondGridOtherSolutions2.Add(h);
                     }
                 }
             }
         }
-        if (secondGridWhichNum > 0)
+        if (secondGridOtherSolutions1.Count > 0)
         {
-            for (int k = 0; k < secondGridWhichNum; k++)
+            for (int k = 0; k < secondGridOtherSolutions1.Count; k++)
             {
                 for (int i = 0; i < 48; i++) //3rd generation
                 {
@@ -326,45 +356,31 @@ public class script : MonoBehaviour {
                     else if (i == 47)
                     {
                         unintendedSolution(k);
+                        debugOtherSolutions.Add(k);
                     }
                 }
             }
         }
-        DebugMsg("Grid one:");
-        DebugMsg("" + debugGrids[0][0] + debugGrids[0][1] + debugGrids[0][2] + debugGrids[0][3] + debugGrids[0][4] + debugGrids[0][5]);
-        DebugMsg("" + debugGrids[0][6] + debugGrids[0][7] + debugGrids[0][8] + debugGrids[0][9] + debugGrids[0][10] + debugGrids[0][11]);
-        DebugMsg("" + debugGrids[0][12] + debugGrids[0][13] + debugGrids[0][14] + debugGrids[0][15] + debugGrids[0][16] + debugGrids[0][17]);
-        DebugMsg("" + debugGrids[0][18] + debugGrids[0][19] + debugGrids[0][20] + debugGrids[0][21] + debugGrids[0][22] + debugGrids[0][23]);
-        DebugMsg("" + debugGrids[0][24] + debugGrids[0][25] + debugGrids[0][26] + debugGrids[0][27] + debugGrids[0][28] + debugGrids[0][29]);
-        DebugMsg("" + debugGrids[0][30] + debugGrids[0][31] + debugGrids[0][32] + debugGrids[0][33] + debugGrids[0][34] + debugGrids[0][35]);
-        DebugMsg("" + debugGrids[0][36] + debugGrids[0][37] + debugGrids[0][38] + debugGrids[0][39] + debugGrids[0][40] + debugGrids[0][41]);
-        DebugMsg("" + debugGrids[0][42] + debugGrids[0][43] + debugGrids[0][44] + debugGrids[0][45] + debugGrids[0][46] + debugGrids[0][47]);
-        DebugMsg("Grid two:");
-        DebugMsg("" + debugGrids[1][0] + debugGrids[1][1] + debugGrids[1][2] + debugGrids[1][3] + debugGrids[1][4] + debugGrids[1][5]);
-        DebugMsg("" + debugGrids[1][6] + debugGrids[1][7] + debugGrids[1][8] + debugGrids[1][9] + debugGrids[1][10] + debugGrids[1][11]);
-        DebugMsg("" + debugGrids[1][12] + debugGrids[1][13] + debugGrids[1][14] + debugGrids[1][15] + debugGrids[1][16] + debugGrids[1][17]);
-        DebugMsg("" + debugGrids[1][18] + debugGrids[1][19] + debugGrids[1][20] + debugGrids[1][21] + debugGrids[1][22] + debugGrids[1][23]);
-        DebugMsg("" + debugGrids[1][24] + debugGrids[1][25] + debugGrids[1][26] + debugGrids[1][27] + debugGrids[1][28] + debugGrids[1][29]);
-        DebugMsg("" + debugGrids[1][30] + debugGrids[1][31] + debugGrids[1][32] + debugGrids[1][33] + debugGrids[1][34] + debugGrids[1][35]);
-        DebugMsg("" + debugGrids[1][36] + debugGrids[1][37] + debugGrids[1][38] + debugGrids[1][39] + debugGrids[1][40] + debugGrids[1][41]);
-        DebugMsg("" + debugGrids[1][42] + debugGrids[1][43] + debugGrids[1][44] + debugGrids[1][45] + debugGrids[1][46] + debugGrids[1][47]);
-        DebugMsg("Grid three:");
-        DebugMsg("" + debugGrids[2][0] + debugGrids[2][1] + debugGrids[2][2] + debugGrids[2][3] + debugGrids[2][4] + debugGrids[2][5]);
-        DebugMsg("" + debugGrids[2][6] + debugGrids[2][7] + debugGrids[2][8] + debugGrids[2][9] + debugGrids[2][10] + debugGrids[2][11]);
-        DebugMsg("" + debugGrids[2][12] + debugGrids[2][13] + debugGrids[2][14] + debugGrids[2][15] + debugGrids[2][16] + debugGrids[2][17]);
-        DebugMsg("" + debugGrids[2][18] + debugGrids[2][19] + debugGrids[2][20] + debugGrids[2][21] + debugGrids[2][22] + debugGrids[2][23]);
-        DebugMsg("" + debugGrids[2][24] + debugGrids[2][25] + debugGrids[2][26] + debugGrids[2][27] + debugGrids[2][28] + debugGrids[2][29]);
-        DebugMsg("" + debugGrids[2][30] + debugGrids[2][31] + debugGrids[2][32] + debugGrids[2][33] + debugGrids[2][34] + debugGrids[2][35]);
-        DebugMsg("" + debugGrids[2][36] + debugGrids[2][37] + debugGrids[2][38] + debugGrids[2][39] + debugGrids[2][40] + debugGrids[2][41]);
-        DebugMsg("" + debugGrids[2][42] + debugGrids[2][43] + debugGrids[2][44] + debugGrids[2][45] + debugGrids[2][46] + debugGrids[2][47]);
-
-        DebugMsg("Calculated solutions: " + secondGridWhichNum);
-        for(int i = 0; i < 8; i++)
+        string debugExtraSolutions = "\n";
+        for (int i = 0; i < debugOtherSolutions.Count; i++)
         {
-            inputGrid[i] = solutionsList[i];
+            debugExtraSolutions += multipleCheckNums1[secondGridOtherSolutions1[debugOtherSolutions[i]]] + "-" + multipleCheckNums2[secondGridOtherSolutions1[debugOtherSolutions[i]]] + ", " + secondGridOtherSolutions2[debugOtherSolutions[i]] + "\n";
         }
+
+        DebugMsg("Grid one:");
+        LogGrids(debugGrids[0]);
+        DebugMsg("Grid two:");
+        LogGrids(debugGrids[1]);
+        DebugMsg("Grid three:");
+        LogGrids(debugGrids[2]);
+
+        DebugMsg("All solutions the computer could find, in the format \"Minimum White Neighbors-Maximum White Neighbors for a white cell to be kept alive, Number of White Neighbors to turn a black square white\"." + debugExtraSolutions);
+
         DebugMsg("Intended number of neighbouring squares to turn a black square white: " + blackToAliveSquaresNum);
         DebugMsg("Intended range of neighbouring squares to keep a white square white: " + whiteStillAliveRanges[0] + " is the minimum number of squares, " + whiteStillAliveRanges[1] + " is the maximum number of squares.");
+
+        DebugMsg("Intended solution:");
+        LogGrids(debugGrids[4]);
     }
     
     void unintendedSolution(int k)
@@ -402,18 +418,11 @@ public class script : MonoBehaviour {
                 }
             }
         }
-        for (int i = 0; i < 48; i++)
-        {
-            if (placeholderGrid[gridNums[i]] != grids[2, gridNums[i]])
-            {
-                i = 48;
-            }
-        }
-        DebugMsg("" + multipleCheckNums1[secondGridOtherSolutions1[k]] + " " + multipleCheckNums2[secondGridOtherSolutions1[k]] + " " + secondGridOtherSolutions2[k]);
         for(int i = 0; i < 48; i++)
         {
             solutionsList.Add(placeholderGrid[gridNums[i]]);
         }
+        tpStillFindingSolution = false;
     }
 
 	// Update is called once per frame
@@ -511,43 +520,24 @@ public class script : MonoBehaviour {
         }
         else if(pressedButton == buttons[2])
         {
-            debugInput = "";
-            debugSolution = "";
+            debugGrids[3] = "";
             for(int i = 0; i < 48; i++)
             {
                 if(inputGrid[i])
                 {
-                    debugInput = debugInput + "#";
+                    debugGrids[3] = debugGrids[3] + '#';
                 }
                 else
                 {
-                    debugInput = debugInput + "O";
+                    debugGrids[3] = debugGrids[3] + 'O';
                 }
             }
             DebugMsg("Inputted:");
-            DebugMsg("" + debugInput[0] + debugInput[1] + debugInput[2] + debugInput[3] + debugInput[4] + debugInput[5]);
-            DebugMsg("" + debugInput[6] + debugInput[7] + debugInput[8] + debugInput[9] + debugInput[10] + debugInput[11]);
-            DebugMsg("" + debugInput[12] + debugInput[13] + debugInput[14] + debugInput[15] + debugInput[16] + debugInput[17]);
-            DebugMsg("" + debugInput[18] + debugInput[19] + debugInput[20] + debugInput[21] + debugInput[22] + debugInput[23]);
-            DebugMsg("" + debugInput[24] + debugInput[25] + debugInput[26] + debugInput[27] + debugInput[28] + debugInput[29]);
-            DebugMsg("" + debugInput[30] + debugInput[31] + debugInput[32] + debugInput[33] + debugInput[34] + debugInput[35]);
-            DebugMsg("" + debugInput[36] + debugInput[37] + debugInput[38] + debugInput[39] + debugInput[40] + debugInput[41]);
-            DebugMsg("" + debugInput[42] + debugInput[43] + debugInput[44] + debugInput[45] + debugInput[46] + debugInput[47]);
-            for (int i = 0; i < (secondGridWhichNum - 1); i++)
+            LogGrids(debugGrids[3]);
+            for (int i = 0; i < (solutionsList.Count / 48); i++)
             {
                 for(int j = 0; j < 48; j++)
                 {
-                    for (int k = 0; k < 48; k++)
-                    {
-                        if (inputGrid[k])
-                        {
-                            debugSolution = debugSolution + "#";
-                        }
-                        else
-                        {
-                            debugSolution = debugSolution + "O";
-                        }
-                    }
                     if (inputGrid[j] != solutionsList[j + (i * 48)])
                     {
                         j = 48;
@@ -676,6 +666,41 @@ public class script : MonoBehaviour {
         {
             yield break;
         }
+    }
+
+    IEnumerator TwitchHandleForcedSolve()
+    {
+        yield return new WaitForSeconds(.05f);
+        while(tpStillFindingSolution)
+        {
+            yield return new WaitForSeconds(.05f);
+        }
+        buttons[1].OnInteract();
+        for (int i = 0; i < 48; i++)
+        {
+            if(solutionsList[i]) //if the first solution's square is white
+            {
+                yield return new WaitForSeconds(.1f);
+                buttons[i + 3].OnInteract();
+            }
+        }
+        yield return new WaitForSeconds(.5f);
+        buttons[2].OnInteract();
+    }
+
+    void LogGrids(string gridString) //stolen from life iteration lo
+    {
+        string logString = "\n";
+        for (int i = 0; i < 48; i++)
+        {
+            logString = logString + gridString[i];
+            if ((i + 1) % 6 == 0) logString += "\n";
+        }
+        if(!Application.isEditor) 
+        {
+            logString.Replace("#", "◼").Replace("O", "◻");
+        }
+        DebugMsg(logString);
     }
 
     void DebugMsg(string msg)

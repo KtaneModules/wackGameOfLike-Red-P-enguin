@@ -16,7 +16,7 @@ MonoBehaviour:
   author: Red Penguin
   description: "==\r\nLive a wack wack, they wack. They\u2019re wack. Wack just makes
     wack wack.\n\r\nModule Name: Wack Game of Life\nModule ID: wackGameOfLife\n\r\nManual:
-    \n\r\nPlaytesters:\n=="
+    https://ktane.timwi.de/HTML/Wack%20Game%20of%20Life.html\n\r\nPlaytesters:\n=="
   version: 1
   outputFolder: build
   previewImage: {fileID: 2800000, guid: ca1bb14b928da0e43abbff591bf00836, type: 3}

@@ -1339,7 +1339,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4968762910382200}
   - component: {fileID: 33527414294167384}
-  - component: {fileID: 136054026395698364}
   - component: {fileID: 114402598946964534}
   m_Layer: 0
   m_Name: Big Button Highlight
@@ -1414,7 +1413,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4336266755722550}
   - component: {fileID: 33157908384843852}
-  - component: {fileID: 65151001146350750}
   - component: {fileID: 23019465195924384}
   - component: {fileID: 114614199401046702}
   - component: {fileID: 114514066462659704}
@@ -1522,7 +1520,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4681941393654400}
   - component: {fileID: 33157958274175660}
-  - component: {fileID: 136190074656189196}
   - component: {fileID: 23938790301613958}
   - component: {fileID: 114664977819973406}
   - component: {fileID: 114561313655438214}
@@ -1652,7 +1649,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4146324720262640}
   - component: {fileID: 33060096871183602}
-  - component: {fileID: 65870583280665214}
   - component: {fileID: 23460838010760050}
   - component: {fileID: 114788356704267066}
   - component: {fileID: 114724194563621596}
@@ -6306,18 +6302,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!65 &65151001146350750
-BoxCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1658085975907250}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!65 &65164429705565342
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -6720,18 +6704,6 @@ BoxCollider:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1529920761004050}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!65 &65870583280665214
-BoxCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1813797290509494}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
@@ -7668,7 +7640,10 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 66d77e79d77f399418abad414212ab00, type: 2}
   - {fileID: 2100000, guid: a086244c976384801b25627d5d4b7a92, type: 2}
   bigButtonText: {fileID: 102206156479252794}
-  TwitchHelpMessage: Use !{0} press 1 13 to press the first button 13 times.
+  TwitchHelpMessage: 'Use !{0} a1 b2 c3 to press a1, b2, and c3. Use !{0} clear to
+    press the clear button. Use !{0} submit to submit the current configuration. Use
+    !{0} next to view the next iteration, or the first if you''re on the third iteration.
+    All commands can be chained (Example: !{0} a1 clear b2 b3 submit)'
 --- !u!114 &114295599856754542
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9685,29 +9660,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShaderNames:
   - KT/Mobile/DiffuseTint
---- !u!136 &136054026395698364
-CapsuleCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1645794660265150}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!136 &136190074656189196
-CapsuleCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1717415251102438}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
