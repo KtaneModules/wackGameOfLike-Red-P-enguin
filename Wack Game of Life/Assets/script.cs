@@ -438,15 +438,11 @@ public class script : MonoBehaviour {
 
     void buttonPressed(KMSelectable pressedButton)
     {
-        pressedButton.AddInteractionPunch();
-        GetComponent<KMAudio>().PlayGameSoundAtTransformWithRef(KMSoundOverride.SoundEffect.ButtonPress, transform);
-
         if (moduleSolved)
         {
             return;
         }
 
-        pressedButton.AddInteractionPunch();
         GetComponent<KMAudio>().PlayGameSoundAtTransformWithRef(KMSoundOverride.SoundEffect.ButtonPress, transform);
 
         if (pressedButton == buttons[0])
